@@ -22,7 +22,7 @@ async function get(req, res, next) {
         next(err);
     }
 }
-
+// ------------------------------------------------------------------
 function getEmplyeeFromRec(req) {
     const employee = {
         first_name: req.body.first_name,
@@ -38,7 +38,7 @@ function getEmplyeeFromRec(req) {
     };
     return employee;
 }
-
+// ------------------------------------------------------------------
 async function post(req, res, next) {
     try {
         let employee = getEmplyeeFromRec(req);
@@ -50,6 +50,25 @@ async function post(req, res, next) {
         next(err);
     }
 }
+// ------------------------------------------------------------------
+async function put(req, res, next) {
+    try {
+        let employee = getEmplyeeFromRec(req);
+        // gets id and adds it the employee from url params
+        employee.employee_id = parseInt(req.params.id, 10);
 
+        employee = await employees.update(employee);
+
+        if (employee !== null) {
+            res.status(200).json(employee);
+        } else {
+            res.status(404).end();
+        }
+    } catch(err) {
+        next(err);
+    }
+}
+// ------------------------------------------------------------------
 module.exports.get = get;
 module.exports.post = post;
+module.exports.put = put;

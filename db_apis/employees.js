@@ -38,6 +38,20 @@ const createSql = `insert into employees (
     :department_id
   ) returning employee_id
   into :employee_id`;
+  // ......................................
+  const updateSql = 
+  `update employees
+  set first_name = :first_name,
+    last_name = :last_name,
+    email = :email,
+    phone_number = :phone_number,
+    hire_date = :hire_date,
+    job_id = :job_id,
+    salary = :salary,
+    commission_pct = :commission_pct,
+    manager_id = :manager_id,
+    department_id = :department_id
+  where employee_id = :employee_id`;
 // --------------------------------------------------------------------------------
 async function find(context) {
     let query = baseQuery;
@@ -67,5 +81,17 @@ async function create(emp) {
     return employee;
 }
 // ---------------------------------------------------------------------------------------
+async function update(emp) {
+    const employee = Object.assign({}, emp);
+    const result = await database.simpleExecute(updateSql, employee);
+
+    if (result.rowsAffected && result.rowsAffected === 1) {
+        return employee;
+    } else {
+        return null;
+    }
+}
+// ---------------------------------------------------------------------------------------
 module.exports.find = find;
 module.exports.create = create;
+module.exports.update = update;
