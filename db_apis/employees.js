@@ -13,6 +13,7 @@ const baseQuery =
    manager_id "manager_id",
    department_id "department_id"
 FROM employees`;
+const sortableColumns = ['id', 'last_name', 'email', 'hire_date', 'salary'];
 // ......................................
 const createSql = `insert into employees (
     first_name,
@@ -70,6 +71,26 @@ async function find(context) {
         binds.employee_id = context.id;
 
         query += `\nWHERE employee_id = :employee_id`;
+    }
+
+    if (context.sort === undefined) {
+        query += '\norder by last_name asc';
+    } else {
+        let [column, order] = context.sort.split(':');
+     
+        if (!sortableColumns.includes(column)) {
+          throw new Error('Invalid "sort" column');
+        }
+     
+        if (order === undefined) {
+          order = 'asc';
+        }
+     
+        if (order !== 'asc' && order !== 'desc') {
+          throw new Error('Invalid "sort" order');
+        }
+     
+        query += `\norder by "${column}" ${order}`;
     }
 
     if (context.skip) {
