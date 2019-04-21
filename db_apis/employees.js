@@ -11,7 +11,7 @@ const baseQuery =
    salary "salary",
    commission_pct "commission_pct",
    manager_id "manager_id",
-   departement_id "departement_id"
+   department_id "department_id"
 FROM employees`;
 // ......................................
 const createSql = `insert into employees (
@@ -55,9 +55,6 @@ const createSql = `insert into employees (
   // .......................................
   const deleteSql =
  `begin
- 
-    delete from job_history
-    where employee_id = :employee_id;
  
     delete from employees
     where employee_id = :employee_id;

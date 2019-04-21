@@ -73,7 +73,7 @@ async function remove(req, res, next) {
     try {
         const id = parseInt(req.params.id, 10);
 
-        const success = await employee.delete(id);
+        const success = await employees.delete(id);
 
         if (success) {
             res.status(204).end();
