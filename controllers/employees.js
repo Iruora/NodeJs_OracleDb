@@ -68,7 +68,24 @@ async function put(req, res, next) {
         next(err);
     }
 }
+// ---------------------------------------------------------------------------------------
+async function remove(req, res, next) {
+    try {
+        const id = parseInt(req.params.id, 10);
+
+        const success = await employee.delete(id);
+
+        if (success) {
+            res.status(204).end();
+        } else {
+            res.status(404).end();
+        }
+    } catch(err) {
+        next(err);
+    }
+}
 // ------------------------------------------------------------------
 module.exports.get = get;
 module.exports.post = post;
 module.exports.put = put;
+module.exports.delete = remove;

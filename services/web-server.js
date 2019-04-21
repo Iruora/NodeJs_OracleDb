@@ -13,7 +13,9 @@ function initialize() {
             const app = express();
             // create HTTP server that uses the express app
             httpServer = http.createServer(app);
-            // the '/' route will end with a response message 'Hello World !'
+            app.use(express.json({
+                reviver: reviveJson
+            }));
             app.use(morgan('combined'));
             app.use('/api', router);
             // bind the http server to the port defined in the configuration
@@ -30,7 +32,7 @@ function initialize() {
         }
     );
 }
-
+// ---------------------------------------------------------------------------------------------------
 function close() {
     return new Promise(
         (resolve, reject) => {
@@ -44,5 +46,16 @@ function close() {
         }
     );
 }
+// ---------------------------------------------------------------------------------------------------
+const iso8601RegExp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
+
+function reviveJson(key, value) {
+    if (typeof value === 'string' && iso8601RegExp.test(value)) {
+        return new Date(value);
+    } else {
+        return value;
+    }
+}
+// ---------------------------------------------------------------------------------------------------
 module.exports.initialize = initialize;
 module.exports.close = close;

@@ -52,6 +52,19 @@ const createSql = `insert into employees (
     manager_id = :manager_id,
     department_id = :department_id
   where employee_id = :employee_id`;
+  // .......................................
+  const deleteSql =
+ `begin
+ 
+    delete from job_history
+    where employee_id = :employee_id;
+ 
+    delete from employees
+    where employee_id = :employee_id;
+ 
+    :rowcount := sql%rowcount;
+ 
+  end;`
 // --------------------------------------------------------------------------------
 async function find(context) {
     let query = baseQuery;
@@ -92,6 +105,21 @@ async function update(emp) {
     }
 }
 // ---------------------------------------------------------------------------------------
+async function remove(id) {
+    const binds = {
+        employee_id: id,
+        rowcount: {
+            dir: oracledb.BIND_OUT,
+            type: oracledb.NUMBER
+        }
+    }
+
+    const result = await database.simpleExecute(deleteSql, binds);
+
+    return result.outBinds.rowcount === 1;
+}
+// ---------------------------------------------------------------------------------------
 module.exports.find = find;
 module.exports.create = create;
 module.exports.update = update;
+module.exports.delete = remove;
